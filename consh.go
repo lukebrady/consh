@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// Splits supplied commands to be used by exec.Command().
 func splitCommand(cmd string, cmdChan chan []string) {
 	cmdArr := strings.Split(cmd, " ")
 	args := strings.Join(cmdArr[1:], " ")
@@ -14,11 +15,14 @@ func splitCommand(cmd string, cmdChan chan []string) {
 	cmdChan <- outCmd
 }
 
+// Executes the supplied commands concurrently.
 func executeCMD(cmd []string, outputChan chan []byte) {
 	if len(cmd[1]) != 0 {
+		println(cmd[1])
 		cmdO := exec.Command(cmd[0], cmd[1])
 		output, err := cmdO.Output()
 		if err != nil {
+			println(err.Error())
 			fmt.Printf("%s failed to execute.\n", cmd)
 		}
 		outputChan <- output
